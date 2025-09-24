@@ -1,0 +1,11 @@
+/* src/assets/css/variables.css */
+:root {
+    --primary-color: #409eff;
+    --text-color: #333;
+    --text-color-secondary: #666;
+    --border-color: #eee;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --border-radius: 4px;
+}
