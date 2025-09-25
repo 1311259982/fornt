@@ -1,34 +1,17 @@
 <template>
-  <!-- 路由出口：所有页面通过路由规则在此渲染 -->
+  <!-- The router will render the correct page component here -->
   <router-view />
 </template>
 
 <script setup>
-// 根组件无需额外逻辑，仅作为路由容器
+// The root component needs no script logic.
+// It acts purely as a container for the router's views.
 </script>
 
 <style>
-/* 全局基础样式（作用于整个应用） */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  color: #333;
-  background-color: #f9f9f9;
-  min-height: 100vh;
-}
-
-/* 全局链接样式统一 */
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-a:hover {
-  color: #409eff; /* Element Plus 主题色，保持一致性 */
-}
+/* 
+  The global styles are now handled by the imported CSS files in main.js 
+  and scoped styles within each component. This file can be kept for 
+  any truly global, unscoped styles if needed in the future.
+*/
 </style>

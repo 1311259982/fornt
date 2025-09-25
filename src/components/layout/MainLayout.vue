@@ -22,7 +22,7 @@
       </div>
     </header>
 
-    <!-- 主内容区 -->
+    <!-- 主内容区 (子路由将在这里渲染) -->
     <main class="main-content">
       <router-view />
     </main>
@@ -37,14 +37,14 @@
 <script setup>
 import { useUserStore } from '@/store/modules/user'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
 const router = useRouter()
 
 const handleLogout = () => {
   userStore.logout()
-  ElMessage.success('退出成功')
+  // ElMessage is not re-integrated yet, so we'll just use console for now.
+  console.log('Logout successful');
   router.push('/login')
 }
 </script>
@@ -64,6 +64,7 @@ const handleLogout = () => {
   height: 60px;
   background-color: #2c3e50;
   color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .logo a {
@@ -83,12 +84,17 @@ const handleLogout = () => {
   text-decoration: none;
   padding: 0.5rem 0;
   position: relative;
+  transition: color 0.3s;
+}
+
+.menu a:hover, .menu a.active {
+  color: #409eff;
 }
 
 .menu a.active::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -2px;
   left: 0;
   width: 100%;
   height: 2px;
@@ -108,31 +114,37 @@ const handleLogout = () => {
   cursor: pointer;
   border: none;
   font-size: 0.9rem;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .btn-primary {
   background-color: #409eff;
   color: white;
 }
+.btn-primary:hover { background-color: #66b1ff; }
 
 .btn-login {
   background-color: transparent;
   color: white;
   border: 1px solid white;
 }
+.btn-login:hover { background-color: white; color: #2c3e50; }
 
 .btn-register {
   background-color: white;
   color: #2c3e50;
 }
+.btn-register:hover { background-color: #f0f2f5; }
 
 .btn-logout {
-  background-color: #e74c3c;
+  background-color: #f56c6c;
   color: white;
 }
+.btn-logout:hover { background-color: #f78989; }
 
 .username {
   color: white;
+  font-weight: bold;
 }
 
 .main-content {
@@ -149,5 +161,6 @@ const handleLogout = () => {
   padding: 1.5rem;
   background-color: #f5f5f5;
   color: #666;
+  border-top: 1px solid #e5e5e5;
 }
 </style>

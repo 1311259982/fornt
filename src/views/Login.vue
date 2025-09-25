@@ -1,77 +1,45 @@
-<!-- src/views/Login.vue -->
 <template>
-  <div class="auth-page">
-    <div class="auth-card">
-      <h2>登录</h2>
-      <el-form :model="user" :rules="rules" ref="formRef" label-width="80px">
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="user.email" type="email" placeholder="请输入邮箱"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="user.password" type="password" placeholder="请输入密码"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleLogin" class="full-width">登录</el-button>
-        </el-form-item>
-      </el-form>
-      <p class="link-text">
-        还没有账号？<router-link to="/register">去注册</router-link>
-      </p>
-    </div>
+  <div class="auth-container">
+    <h2>登录</h2>
+    <form @submit.prevent="handleLogin">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" v-model="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input type="password" id="password" v-model="password" required>
+      </div>
+      <button type="submit" class="btn-submit">登录</button>
+    </form>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useStore } from '@/store';
-import { login } from '@/services/auth';
-import { ElMessage } from 'element-plus';
+import { useUserStore } from '@/store/modules/user';
 
-const user = ref({ email: '', password: '' });
-const formRef = ref(null);
+const username = ref('');
+const password = ref('');
 const router = useRouter();
-const store = useStore();
-
-const rules = {
-  email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
-};
+const userStore = useUserStore();
 
 const handleLogin = async () => {
-  await formRef.value.validate();
-  try {
-    const response = await login(user.value);
-    store.dispatch('user/login', response.data);
-    router.push('/');
-  } catch (error) {
-    ElMessage.error(error.response?.data?.msg || '登录失败');
-  }
+  console.log('Attempting login with (mock):', { username: username.value });
+  // Using the mock store action, no API call is made.
+  userStore.login({ username: username.value });
+  console.log('Mock login successful, redirecting to home...');
+  router.push('/');
 };
 </script>
 
 <style scoped>
-.auth-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-.auth-card {
-  width: 400px;
-  padding: 30px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-.auth-card h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.full-width {
-  width: 100%;
-}
-.link-text {
-  text-align: center;
-  margin-top: 15px;
-}
+.auth-container { max-width: 400px; margin: 5rem auto; padding: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; background: white; }
+h2 { text-align: center; margin-bottom: 1.5rem; color: #333; }
+.form-group { margin-bottom: 1rem; }
+label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+input { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; }
+.btn-submit { width: 100%; padding: 0.75rem; background-color: #409eff; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 1rem; }
+.btn-submit:hover { background-color: #66b1ff; }
 </style>

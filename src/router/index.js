@@ -1,52 +1,43 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import MainLayout from '@/components/layout/MainLayout.vue'
-import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
-import Register from '@/views/Register.vue'
-import ArticleList from '@/views/ArticleList.vue'
-import ArticleDetail from '@/views/ArticleDetail.vue'
-import CreateArticle from '@/views/CreateArticle.vue'
-import EditArticle from '@/views/EditArticle.vue'
+// src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router';
 
-// 路由守卫：验证登录状态
-const requireAuth = (to, from, next) => {
-    const token = localStorage.getItem('token')
-    if (token) {
-        next()
-    } else {
-        next('/login')
-    }
-}
+// Import all components
+import MainLayout from '@/components/layout/MainLayout.vue';
+import Home from '@/views/Home.vue';
+import ArticleList from '@/views/ArticleList.vue';
+import ArticleDetail from '@/views/ArticleDetail.vue';
+import CreateArticle from '@/views/CreateArticle.vue';
+import EditArticle from '@/views/EditArticle.vue';
+import Login from '@/views/Login.vue';
+import Register from '@/views/Register.vue';
 
 const routes = [
+    // Routes that use the main layout
     {
         path: '/',
         component: MainLayout,
         children: [
-            { path: '', name: 'Home', component: Home },
-            { path: 'articles', name: 'ArticleList', component: ArticleList },
-            { path: 'articles/:id', name: 'ArticleDetail', component: ArticleDetail },
-            {
-                path: 'articles/create',
-                name: 'CreateArticle',
-                component: CreateArticle,
-                beforeEnter: requireAuth
-            },
-            {
-                path: 'articles/edit/:id',
-                name: 'EditArticle',
-                component: EditArticle,
-                beforeEnter: requireAuth
-            }
+            { path: '', component: Home },
+            { path: 'articles', component: ArticleList },
+            { path: 'articles/create', component: CreateArticle, meta: { requiresAuth: true } },
+            { path: 'articles/:id', component: ArticleDetail },
+            { path: 'articles/edit/:id', component: EditArticle, meta: { requiresAuth: true } }
         ]
     },
-    { path: '/login', name: 'Login', component: Login },
-    { path: '/register', name: 'Register', component: Register }
-]
+    // Standalone routes
+    {
+        path: '/login',
+        component: Login
+    },
+    {
+        path: '/register',
+        component: Register
+    }
+];
 
 const router = createRouter({
     history: createWebHistory(),
     routes
-})
+});
 
-export default router
+export default router;

@@ -1,23 +1,41 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-// 导入路由配置
-import router from './router'
-// 导入Pinia状态管理
 import store from './store'
-// 导入Element Plus组件库
+import router from './router'
+import { useUserStore } from '@/store/modules/user';
+
+// Re-importing ElementPlus as per original setup
 import ElementPlus from 'element-plus'
-// 导入Element Plus样式
 import 'element-plus/dist/index.css'
-// 导入全局样式变量（如果创建了该文件）
+
+// Re-importing global styles
 import './assets/css/variables.css'
 
-// 创建Vue应用实例
 const app = createApp(App)
 
-// 注册插件
-app.use(router)    // 启用路由
-app.use(store)     // 启用状态管理
-app.use(ElementPlus) // 启用UI组件库
+// Install all plugins first
+app.use(store)
+app.use(router)
+app.use(ElementPlus)
 
-// 挂载应用到index.html的#app元素
+// --- CRITICAL STEP: Set up navigation guard AFTER all plugins are installed ---
+
+// 1. Get a store instance here, in a safe context.
+const userStore = useUserStore();
+
+// 2. Add the navigation guard.
+router.beforeEach((to, from, next) => {
+    const isLoggedIn = userStore.isLogin;
+
+    if (to.meta.requiresAuth && !isLoggedIn) {
+        // If the route requires auth and user is not logged in, redirect to login page.
+        console.log(`Redirecting to /login because route requires auth and user is not logged in.`);
+        next('/login');
+    } else {
+        // Otherwise, allow navigation.
+        next();
+    }
+});
+
+// Finally, mount the app.
 app.mount('#app')
