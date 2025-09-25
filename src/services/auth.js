@@ -1,13 +1,25 @@
-import axios from './axios'
+import service from './axios';
 
-export const login = (userData) => {
-    return axios.post('/auth/login', userData)
+/**
+ * 登录 API
+ * @param {object} data - 包含 username 和 password
+ */
+export function login(data) {
+    return service({
+        url: '/auth/login',
+        method: 'post',
+        data
+    });
 }
 
-export const register = (userData) => {
-    return axios.post('/auth/register', userData)
-}
-
-export const getUserInfo = () => {
-    return axios.get('/auth/info')
+/**
+ * 注册 API
+ * @param {object} data - 包含 username 和 password
+ */
+export function register(data) {
+    return service({
+        url: '/auth/register',
+        method: 'post',
+        data
+    });
 }

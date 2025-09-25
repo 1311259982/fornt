@@ -18,24 +18,55 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { getArticleById, updateArticle } from '@/services/article';
+import { ElMessage } from 'element-plus';
 
 const title = ref('');
 const content = ref('');
 const router = useRouter();
 const route = useRoute();
 
+const fetchArticleToEdit = async () => {
+  try {
+    const articleId = route.params.id;
+    if (articleId) {
+      const res = await getArticleById(articleId);
+      if (res && res.data) {
+        title.value = res.data.title;
+        content.value = res.data.content;
+      } else {
+        ElMessage.error('未找到文章或获取失败');
+        router.push('/articles'); // Redirect if article not found
+      }
+    } else {
+      ElMessage.error('文章ID缺失');
+      router.push('/articles');
+    }
+  } catch (error) {
+    console.error('获取文章详情失败', error);
+    ElMessage.error('获取文章详情请求失败');
+    router.push('/articles');
+  }
+};
+
 onMounted(() => {
-  console.log(`Fetching mock data for article ${route.params.id}`);
-  // In a real app, you'd fetch the article data here.
-  // For now, we just populate it with placeholder content.
-  title.value = `文章标题 ${route.params.id}`;
-  content.value = `这是文章 ${route.params.id} 的原始内容。`;
+  fetchArticleToEdit();
 });
 
-const handleSubmit = () => {
-  console.log('Mock Update:', { id: route.params.id, title: title.value, content: content.value });
-  alert('文章已“更新”！(静态模式)');
-  router.push(`/articles`);
+const handleSubmit = async () => {
+  try {
+    const articleId = route.params.id;
+    const res = await updateArticle(articleId, { title: title.value, content: content.value });
+    if (res && res.code === 200) {
+      ElMessage.success('文章更新成功');
+      router.push(`/articles/${articleId}`);
+    } else {
+      ElMessage.error(res.message || '更新失败');
+    }
+  } catch (error) {
+    console.error('更新文章失败', error);
+    ElMessage.error('更新文章请求失败');
+  }
 };
 </script>
 

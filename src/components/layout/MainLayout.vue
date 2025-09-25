@@ -37,14 +37,14 @@
 <script setup>
 import { useUserStore } from '@/store/modules/user'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'; // Re-enable ElMessage
 
 const userStore = useUserStore()
 const router = useRouter()
 
 const handleLogout = () => {
   userStore.logout()
-  // ElMessage is not re-integrated yet, so we'll just use console for now.
-  console.log('Logout successful');
+  ElMessage.success('退出成功'); // Restore ElMessage feedback
   router.push('/login')
 }
 </script>

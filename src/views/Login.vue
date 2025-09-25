@@ -3,8 +3,8 @@
     <h2>登录</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
-        <label for="username">用户名</label>
-        <input type="text" id="username" v-model="username" required>
+        <label for="email">邮箱</label> 
+        <input type="email" id="email" v-model="email" required> 
       </div>
       <div class="form-group">
         <label for="password">密码</label>
@@ -19,18 +19,29 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
+import { login as apiLogin } from '@/services/auth';
+import { ElMessage } from 'element-plus';
 
-const username = ref('');
+const email = ref(''); // Changed from username
 const password = ref('');
 const router = useRouter();
 const userStore = useUserStore();
 
 const handleLogin = async () => {
-  console.log('Attempting login with (mock):', { username: username.value });
-  // Using the mock store action, no API call is made.
-  userStore.login({ username: username.value });
-  console.log('Mock login successful, redirecting to home...');
-  router.push('/');
+  try {
+    // Send email and password as required by the backend
+    const res = await apiLogin({ email: email.value, password: password.value });
+    if (res && res.code === 200) {
+      userStore.login(res.data);
+      ElMessage.success('登录成功');
+      router.push('/');
+    } else {
+      ElMessage.error(res.message || '登录失败');
+    }
+  } catch (error) {
+    console.error('登录请求失败', error);
+    ElMessage.error('登录请求失败，请检查网络或服务器');
+  }
 };
 </script>
 

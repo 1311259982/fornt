@@ -7,6 +7,10 @@
         <input type="text" id="username" v-model="username" required>
       </div>
       <div class="form-group">
+        <label for="email">邮箱</label> 
+        <input type="email" id="email" v-model="email" required> 
+      </div>
+      <div class="form-group">
         <label for="password">密码</label>
         <input type="password" id="password" v-model="password" required>
       </div>
@@ -19,18 +23,33 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/modules/user';
+import { ElMessage } from 'element-plus';
 
 const username = ref('');
+const email = ref(''); // Added email field
 const password = ref('');
 const router = useRouter();
 const userStore = useUserStore();
 
 const handleRegister = async () => {
-  console.log('Attempting to register (mock):', { username: username.value });
-  // Using the mock store action
-  await userStore.register({ username: username.value, password: password.value });
-  console.log('Mock registration successful, redirecting to login...');
-  router.push('/login');
+  try {
+    // Send all required fields as per backend documentation
+    const res = await userStore.register({
+      username: username.value,
+      password: password.value,
+      email: email.value,
+      role: 'USER' // Hardcode role as per common practice
+    });
+    if (res && res.code === 200) {
+      ElMessage.success('注册成功，请登录');
+      router.push('/login');
+    } else {
+      ElMessage.error(res.message || '注册失败');
+    }
+  } catch (error) {
+    console.error('注册请求失败', error);
+    ElMessage.error('注册请求失败，请检查网络或服务器');
+  }
 };
 </script>
 
