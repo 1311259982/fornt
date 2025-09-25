@@ -6,9 +6,21 @@ import service from './axios';
  */
 export function getArticleList(params) {
     return service({
-        url: '/posts', // Corrected from /articles
+        url: '/posts',
         method: 'get',
         params
+    });
+}
+
+/**
+ * 根据用户ID获取文章列表
+ * @param {string} userId - 用户 ID
+ */
+export function getArticlesByUserId(userId) {
+    return service({
+        url: '/posts',
+        method: 'get',
+        params: { userId } // Assuming the backend supports filtering by userId
     });
 }
 
@@ -18,7 +30,7 @@ export function getArticleList(params) {
  */
 export function getArticleById(id) {
     return service({
-        url: `/posts/${id}`, // Corrected from /articles
+        url: `/posts/${id}`,
         method: 'get'
     });
 }
@@ -29,7 +41,7 @@ export function getArticleById(id) {
  */
 export function createArticle(data) {
     return service({
-        url: '/posts', // Corrected from /articles
+        url: '/posts',
         method: 'post',
         data
     });
@@ -42,7 +54,7 @@ export function createArticle(data) {
  */
 export function updateArticle(id, data) {
     return service({
-        url: `/posts/${id}`, // Corrected from /articles
+        url: `/posts/${id}`,
         method: 'put',
         data
     });
@@ -54,7 +66,7 @@ export function updateArticle(id, data) {
  */
 export function deleteArticle(id) {
     return service({
-        url: `/posts/${id}`, // Corrected from /articles
+        url: `/posts/${id}`,
         method: 'delete'
     });
 }

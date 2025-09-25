@@ -1,5 +1,6 @@
 <template>
   <div>
+    <PageHeader title="文章详情" />
     <div v-if="article" class="article-detail-container">
       <h2>{{ article.title }}</h2>
       <p class="article-meta">作者: {{ article.author }} | 发布日期: {{ new Date(article.createdAt).toLocaleDateString() }}</p>
@@ -15,6 +16,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { getArticleById } from '@/services/article';
+import PageHeader from '@/components/common/PageHeader.vue'; // Import the new component
 
 const route = useRoute();
 const article = ref(null);
@@ -52,6 +54,7 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+/* The h2 style is now in PageHeader, but we keep this for the article title */
 h2 { margin-bottom: 1rem; color: #333; }
 .article-meta { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
 .article-content { line-height: 1.8; color: #444; }

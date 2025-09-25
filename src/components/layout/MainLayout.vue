@@ -12,7 +12,8 @@
       <div class="user-actions">
         <template v-if="userStore.isLogin">
           <router-link to="/articles/create" class="btn-primary">发布文章</router-link>
-          <span class="username">{{ userStore.username }}</span>
+          <!-- Changed username span to a router-link -->
+          <router-link to="/profile" class="username-link">{{ userStore.username }}</router-link>
           <button @click="handleLogout" class="btn-logout">退出</button>
         </template>
         <template v-else>
@@ -22,8 +23,21 @@
       </div>
     </header>
 
-    <!-- 主内容区 (子路由将在这里渲染) -->
+    <!-- 主内容区 -->
     <main class="main-content">
+      <!-- 面包屑导航 -->
+      <div class="breadcrumb-container">
+        <el-breadcrumb separator=">">
+          <el-breadcrumb-item 
+            v-for="item in breadcrumbs" 
+            :key="item.path" 
+            :to="{ path: item.path }"
+          >
+            {{ item.meta.title }}
+          </el-breadcrumb-item>
+        </el-breadcrumb>
+      </div>
+      
       <router-view />
     </main>
 
@@ -35,21 +49,44 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/store/modules/user'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'; // Re-enable ElMessage
+import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useUserStore } from '@/store/modules/user';
+import { ElMessage } from 'element-plus';
 
-const userStore = useUserStore()
-const router = useRouter()
+const userStore = useUserStore();
+const route = useRoute();
+const router = useRouter();
 
 const handleLogout = () => {
-  userStore.logout()
-  ElMessage.success('退出成功'); // Restore ElMessage feedback
-  router.push('/login')
-}
+  userStore.logout();
+  ElMessage.success('退出成功');
+  router.push('/login');
+};
+
+// 计算面包屑路径
+const breadcrumbs = computed(() => {
+  return route.matched.filter(item => item.meta && item.meta.title && item.path !== '/');
+});
 </script>
 
 <style scoped>
+.username-link {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.username-link:hover {
+  color: #409eff;
+}
+
+.breadcrumb-container {
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -141,11 +178,6 @@ const handleLogout = () => {
   color: white;
 }
 .btn-logout:hover { background-color: #f78989; }
-
-.username {
-  color: white;
-  font-weight: bold;
-}
 
 .main-content {
   flex: 1;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>文章列表</h2>
+    <PageHeader title="文章列表" />
     <div v-if="articles.length > 0" class="article-list-container">
       <ArticleCard 
         v-for="article in articles" 
@@ -19,6 +19,7 @@
 import { ref, onMounted } from 'vue';
 import { getArticleList } from '@/services/article';
 import ArticleCard from '@/components/common/ArticleCard.vue';
+import PageHeader from '@/components/common/PageHeader.vue'; // Import the new component
 
 const articles = ref([]);
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>编辑文章 (ID: {{ $route.params.id }})</h2>
+    <PageHeader :title="`编辑文章 (ID: ${$route.params.id})`" />
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
         <label for="title">标题</label>
@@ -20,6 +20,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { getArticleById, updateArticle } from '@/services/article';
 import { ElMessage } from 'element-plus';
+import PageHeader from '@/components/common/PageHeader.vue'; // Import the new component
 
 const title = ref('');
 const content = ref('');

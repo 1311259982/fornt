@@ -18,24 +18,22 @@ app.use(store)
 app.use(router)
 app.use(ElementPlus)
 
-// --- CRITICAL STEP: Set up navigation guard AFTER all plugins are installed ---
-
-// 1. Get a store instance here, in a safe context.
+// --- DEBUGGING: Navigation guard is temporarily disabled ---
+/*
 const userStore = useUserStore();
 
-// 2. Add the navigation guard.
 router.beforeEach((to, from, next) => {
     const isLoggedIn = userStore.isLogin;
 
     if (to.meta.requiresAuth && !isLoggedIn) {
-        // If the route requires auth and user is not logged in, redirect to login page.
         console.log(`Redirecting to /login because route requires auth and user is not logged in.`);
         next('/login');
     } else {
-        // Otherwise, allow navigation.
         next();
     }
 });
+*/
+// --- END OF DEBUGGING BLOCK ---
 
 // Finally, mount the app.
 app.mount('#app')

@@ -3,8 +3,8 @@
     <h2>登录</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
-        <label for="email">邮箱</label> 
-        <input type="email" id="email" v-model="email" required> 
+        <label for="identifier">用户名或邮箱</label> 
+        <input type="text" id="identifier" v-model="identifier" required> 
       </div>
       <div class="form-group">
         <label for="password">密码</label>
@@ -22,15 +22,27 @@ import { useUserStore } from '@/store/modules/user';
 import { login as apiLogin } from '@/services/auth';
 import { ElMessage } from 'element-plus';
 
-const email = ref(''); // Changed from username
+const identifier = ref('');
 const password = ref('');
 const router = useRouter();
 const userStore = useUserStore();
 
 const handleLogin = async () => {
   try {
-    // Send email and password as required by the backend
-    const res = await apiLogin({ email: email.value, password: password.value });
+    // --- CRITICAL LOGIC: Build the payload based on input type ---
+    let loginPayload = { password: password.value };
+
+    if (identifier.value.includes('@')) {
+      // If input contains '@', treat it as an email
+      loginPayload.email = identifier.value;
+    } else {
+      // Otherwise, treat it as a username
+      loginPayload.username = identifier.value;
+    }
+    // --- END OF CRITICAL LOGIC ---
+
+    const res = await apiLogin(loginPayload);
+    
     if (res && res.code === 200) {
       userStore.login(res.data);
       ElMessage.success('登录成功');
