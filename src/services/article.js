@@ -13,14 +13,14 @@ export function getArticleList(params) {
 }
 
 /**
- * 根据用户ID获取文章列表
- * @param {string} userId - 用户 ID
+ * 获取当前登录用户的所有文章
+ * @param {object} params - 可选参数, e.g., { isPublished: true/false }
  */
-export function getArticlesByUserId(userId) {
+export function getMyArticles(params) {
     return service({
-        url: '/posts',
+        url: '/posts/my',
         method: 'get',
-        params: { userId } // Assuming the backend supports filtering by userId
+        params
     });
 }
 
@@ -68,5 +68,16 @@ export function deleteArticle(id) {
     return service({
         url: `/posts/${id}`,
         method: 'delete'
+    });
+}
+
+/**
+ * Publishes a draft article.
+ * @param {string} id - The ID of the article to publish.
+ */
+export function publishDraft(id) {
+    return service({
+        url: `/posts/${id}/publish`,
+        method: 'put'
     });
 }

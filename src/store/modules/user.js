@@ -4,22 +4,27 @@ import { register as apiRegister } from '@/services/auth';
 
 export const useUserStore = defineStore('user', {
     state: () => ({
-        id: null,
+        // ULTIMATE FIX: Try to initialize ID from 'userId' or 'id' from localStorage
+        id: localStorage.getItem('userId') || localStorage.getItem('id') || null,
         username: '',
         role: '',
         token: localStorage.getItem('token') || '',
         isLogin: !!localStorage.getItem('token')
     }),
     actions: {
-        // This action commits user data to the store after a successful login.
-        // It now correctly maps backend's 'token' to store's 'token' and 'userId' to 'id'.
         login(loginInfo) {
-            this.id = loginInfo.userId; // Map backend's userId to store's id
+            // ULTIMATE FIX: Defensively get the user ID from either 'userId' or 'id' field
+            const userId = loginInfo.userId || loginInfo.id;
+
+            this.id = userId;
             this.username = loginInfo.username;
             this.role = loginInfo.role;
-            this.token = loginInfo.token; // Map backend's token to store's token
+            this.token = loginInfo.token;
             this.isLogin = true;
+
+            // Store both token and the found user ID in localStorage
             localStorage.setItem('token', loginInfo.token);
+            localStorage.setItem('userId', userId);
         },
         logout() {
             this.id = null;
@@ -27,9 +32,12 @@ export const useUserStore = defineStore('user', {
             this.role = '';
             this.token = '';
             this.isLogin = false;
+
+            // Remove all user-related items from localStorage
             localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('id'); // Also remove old 'id' key for cleanup
         },
-        // This action calls the registration API.
         async register(user) {
             return await apiRegister(user);
         }
