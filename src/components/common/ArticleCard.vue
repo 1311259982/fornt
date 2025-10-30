@@ -1,120 +1,113 @@
 <template>
   <div class="article-card">
-    <h3 class="article-title">
-      <router-link :to="`/articles/${article.id}`">{{ article.title }}</router-link>
-    </h3>
-    <div class="article-meta">
-      <span>作者: {{ article.username }}</span>
-      <span>发布时间: {{ formatDate(article.createdAt) }}</span>
-    </div>
-    <p class="article-excerpt">{{ getExcerpt(article.content) }}</p>
-    <div class="article-footer">
-      <div class="article-tags">
-        <el-tag
-            v-for="(tag, index) in article.tags"
-            :key="index"
-            size="mini"
-            v-if="index < 3"
-        >
-          {{ tag }}
-        </el-tag>
-        <el-tag
-            size="mini"
-            v-if="article.tags && article.tags.length > 3"
-        >
-          +{{ article.tags.length - 3 }}
-        </el-tag>
+    <div class="card-content">
+      <h3 class="card-title">
+        <router-link :to="`/articles/${article.id}`">{{ article.title }}</router-link>
+      </h3>
+      <!-- ADDED: Author and Date Info -->
+      <div class="card-meta">
+        <span class="meta-author">{{ article.authorName || '匿名作者' }}</span>
+        <span class="meta-date">发布于 {{ new Date(article.createdAt).toLocaleDateString() }}</span>
       </div>
-      <router-link :to="`/articles/${article.id}`" class="read-more">阅读全文 →</router-link>
+      <p class="card-excerpt">{{ truncatedContent }}</p>
+    </div>
+    <div class="card-footer">
+      <router-link :to="`/articles/${article.id}`" class="read-more">阅读全文 &rarr;</router-link>
+      <span class="views">浏览: {{ article.views || 0 }}</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { formatDate } from '@/utils/date'
+import { computed } from 'vue';
 
-// 接收父组件传递的文章数据
 const props = defineProps({
   article: {
     type: Object,
     required: true,
-    default: () => ({})
-  }
-})
+  },
+});
 
-// 获取文章摘要（前150个字符）
-const getExcerpt = (content) => {
-  if (!content) return '暂无内容'
-  // 简单处理HTML标签
-  const plainText = content.replace(/<[^>]+>/g, '')
-  return plainText.length > 150 ? plainText.slice(0, 150) + '...' : plainText
-}
+// Create a truncated version of the content for the excerpt
+const truncatedContent = computed(() => {
+  if (!props.article.content) return '';
+  const strippedContent = props.article.content.replace(/<[^>]*>?/gm, ''); // Strip HTML tags
+  return strippedContent.length > 100
+    ? strippedContent.substring(0, 100) + '...'
+    : strippedContent;
+});
 </script>
 
 <style scoped>
 .article-card {
-  background-color: white;
+  background: white;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
 .article-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.article-title {
-  margin: 0 0 1rem 0;
-  font-size: 1.2rem;
-  line-height: 1.4;
+.card-content {
+  padding: 1.5rem;
+  flex-grow: 1;
 }
 
-.article-title a {
-  color: #333;
+.card-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.4rem;
+}
+
+.card-title a {
   text-decoration: none;
+  color: #333;
+  transition: color 0.3s;
 }
 
-.article-title a:hover {
+.card-title a:hover {
   color: #409eff;
 }
 
-.article-meta {
+.card-meta {
   display: flex;
   gap: 1rem;
-  color: #666;
+  color: #999;
   font-size: 0.9rem;
   margin-bottom: 1rem;
 }
 
-.article-excerpt {
-  color: #555;
+.card-excerpt {
+  color: #666;
   line-height: 1.6;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  margin: 0;
 }
 
-.article-footer {
+.card-footer {
+  background-color: #f9f9f9;
+  padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.article-tags {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  border-top: 1px solid #e5e5e5;
 }
 
 .read-more {
   color: #409eff;
   text-decoration: none;
-  font-size: 0.9rem;
   font-weight: 500;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+.views {
+  font-size: 0.9rem;
+  color: #999;
 }
 </style>
